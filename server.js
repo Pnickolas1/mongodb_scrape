@@ -7,10 +7,19 @@
 
 // Dependencies:
 
+//Initialize Express App
+var express = require("express");
+//Initialize mongoose
+var mongoose = require('mongoose');
 // Snatches HTML from URLs
 var request = require('request');
 // Scrapes our HTML
 var cheerio = require('cheerio');
+
+
+//connect to mongoose db
+mongoose.connect('mongodb://localhost/scaper_bot');
+
 
 // Make a request call to grab the HTML body from the site of your choice
 request("http://www.zerohedge.com/", function(error, response, html) {
@@ -20,11 +29,11 @@ request("http://www.zerohedge.com/", function(error, response, html) {
 
     $("article.node-teaser").each(function(i, element) {
         
-       var title = $('.teaser-title').text();
+        var title = $(element).children('h2.teaser-title').text();
         var link =  'www.zerohedge.com' + $(element).find('a').attr("href");
 
         result.push({
-          title: title,
+            title: title,
             link: link
         });
 });
