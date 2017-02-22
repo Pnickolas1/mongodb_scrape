@@ -31,7 +31,7 @@ request("http://www.zerohedge.com/", function(error, response, html) {
         
         var title = $(element).children('h2.teaser-title').text();
         var link =  'www.zerohedge.com' + $(element).find('a').attr("href");
-
+        
         result.push({
             title: title,
             link: link
