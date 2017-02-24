@@ -27,7 +27,7 @@ request("http://www.zerohedge.com/", function(error, response, html) {
 
         //the result of the scrape
         result.push({
-            //title:title
+            title:title
             link:link
         });
     });
