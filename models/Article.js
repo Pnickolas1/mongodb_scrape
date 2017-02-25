@@ -1,8 +1,10 @@
 //Require mongoose
 var mongoose = require('mongoose');
 
+var Schema = mongoose.Schema;
+
 //Create Schema class
-var ArticleSchema = new ArticleSchema({
+var ArticleSchema = new Schema({
     //title is required
     title: {
         type: String,

@@ -5,8 +5,8 @@ var logger = require('morgan');
 var mongoose = require('mongoose');
 
 //Require Articles Model
-var Article = require('./models/articles.js');
-
+var Article = require('./models/Article.js');
+var Note = require("./models/Note.js");
 //Scraping tools
 var request = require('request');
 var cheerio = require('cheerio');
@@ -59,15 +59,15 @@ app.get("/scrape", function(req,res) {
         var result = {};
 
         //this needs work , right now I cannot get to the article title
-        var title = $(element).children('h2.teaser-title').text();
+        result.title = $(element).children('h2.teaser-title').text();
 
         //this locates the link in zerohedge and copies
-        var link =  'www.zerohedge.com' + $(element).find('a').attr("href");
+        result.link =  'http://www.zerohedge.com/' + $(element).find('a').attr("href");
 
         //Use the Article Model, create a new entry
         //this effectively passes the result object ot the entry (and the title and link)
         var entry = new Article(result);
-
+        console.log(entry);
         //Now, save that entry to the db 
         entry.save(function(err,doc) {
             //Log any errors
@@ -115,6 +115,36 @@ app.get("/articles/:id", function(req,res) {
             res.json(doc);
         }
     });
+});
+
+// Create a new note or replace an existing note
+app.post("/articles/:id", function(req, res) {
+  // Create a new note and pass the req.body to the entry
+  var newNote = new Note(req.body);
+
+  // And save the new note the db
+  newNote.save(function(error, doc) {
+    // Log any errors
+    if (error) {
+      console.log(error);
+    }
+    // Otherwise
+    else {
+      // Use the article id to find and update it's note
+      Article.findOneAndUpdate({ "_id": req.params.id }, { "note": doc._id })
+      // Execute the above query
+      .exec(function(err, doc) {
+        // Log any errors
+        if (err) {
+          console.log(err);
+        }
+        else {
+          // Or send the document to the browser
+          res.send(doc);
+        }
+      });
+    }
+  });
 });
 
 
